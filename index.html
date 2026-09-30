@@ -18,8 +18,12 @@
         header { background: var(--primary); color: white; padding: 20px; text-align: center; border-radius: 24px 24px 0 0; }
         h1 { margin: 0; font-size: 28px; }
         .score-board { font-size: 18px; font-weight: bold; background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; display: inline-block; margin-top: 10px; }
+        
         main { padding: 30px; text-align: center; min-height: 400px; display: flex; flex-direction: column; justify-content: center; }
-        .menu-grid { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+        
+        #loading-screen { font-size: 20px; font-weight: bold; color: var(--secondary); margin-bottom: 20px; }
+        
+        .menu-grid { display: none; gap: 20px; justify-content: center; flex-wrap: wrap; }
         .card { background: var(--secondary); color: white; padding: 40px 20px; border-radius: 20px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; width: 200px; font-size: 24px; font-weight: bold; border: none; outline: none; }
         .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(78, 205, 196, 0.4); }
         .card.math { background: var(--secondary); }
@@ -36,7 +40,6 @@
         
         .nav-btn { margin-top: 30px; padding: 10px 20px; font-size: 18px; background: var(--accent); border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
         
-        /* Responsive for Tablet/Mobile */
         @media (max-width: 600px) {
             .options { grid-template-columns: 1fr; }
             .card { width: 100%; }
@@ -52,13 +55,16 @@
     </header>
     
     <main>
+        <!-- Status Loading -->
+        <div id="loading-screen">⏳ Memanggil soal dari markas (Cloudflare)...</div>
+
         <!-- Menu Utama -->
         <div id="main-menu" class="menu-grid">
             <button class="card math" onclick="startSubject('math')">
-                🧮<br>Matematika<br><span style="font-size:14px;font-weight:normal">(Singapore & Cambridge)</span>
+                🧮<br>Matematika
             </button>
             <button class="card ipas" onclick="startSubject('ipas')">
-                🌍<br>IPAS<br><span style="font-size:14px;font-weight:normal">(Kurikulum Merdeka)</span>
+                🌍<br>IPAS
             </button>
         </div>
 
@@ -73,46 +79,13 @@
 </div>
 
 <script>
-    // Database Soal
-    const database = {
-        math: [
-            {
-                // Pendekatan Singapore Math (Visualisasi Bar Model)
-                visual: "🍎🍎🍎 + 🍎🍎🍎",
-                q: "Jika 1 keranjang berisi 3 apel, berapa apel di 2 keranjang? (Berpikir: 2 kelompok dari 3)",
-                options: ["5", "6", "9", "4"],
-                ans: "6"
-            },
-            {
-                // Pendekatan Cambridge (Logika & Critical Thinking)
-                visual: "🟨🟨🟨 ➡️ 🟦",
-                q: "Setiap 3 blok kuning bisa ditukar dengan 1 blok biru. Jika kamu punya 9 blok kuning, berapa blok biru yang kamu dapat?",
-                options: ["2", "3", "4", "9"],
-                ans: "3"
-            }
-        ],
-        ipas: [
-            {
-                // Kurikulum Merdeka (Kontekstual - Wujud Benda)
-                visual: "🧊 ➡️ ☀️ ➡️ 💧",
-                q: "Es batu yang diletakkan di bawah sinar matahari akan berubah wujud dari...",
-                options: ["Cair ke Padat", "Padat ke Gas", "Padat ke Cair", "Gas ke Cair"],
-                ans: "Padat ke Cair"
-            },
-            {
-                // Kurikulum Merdeka (Makhluk Hidup & Lingkungan)
-                visual: "🌱 ☀️ 💧",
-                q: "Tanaman butuh sinar matahari dan air untuk membuat makanannya sendiri. Proses ini disebut...",
-                options: ["Mencair", "Fotosintesis", "Bernapas", "Berkembang biak"],
-                ans: "Fotosintesis"
-            }
-        ]
-    };
-
+    // Variabel awal
+    let database = { math: [], ipas: [] };
     let currentSubject = '';
     let currentQuestionIndex = 0;
     let score = 0;
 
+    const loadingScreen = document.getElementById('loading-screen');
     const mainMenu = document.getElementById('main-menu');
     const quizArea = document.getElementById('quiz-area');
     const visualEl = document.getElementById('visual');
@@ -120,7 +93,36 @@
     const optionsEl = document.getElementById('options');
     const scoreEl = document.getElementById('score');
 
+    // MENGAMBIL DATA DARI CLOUDFLARE API
+    async function muatSoalDariCloudflare() {
+        try {
+            // ---> GANTI URL DI BAWAH INI DENGAN URL WORKERS ANDA (misal: https://edukids-api.username.workers.dev) <---
+            const urlAPI = 'MASUKKAN_URL_WORKER_ANDA_DISINI'; 
+            
+            const response = await fetch(urlAPI);
+            database = await response.json();
+            
+            // Sembunyikan loading, tampilkan menu
+            loadingScreen.style.display = 'none';
+            mainMenu.style.display = 'flex';
+            
+            console.log("✅ Soal berhasil dimuat dari database Cloudflare!");
+        } catch (error) {
+            console.error("Gagal memuat soal:", error);
+            loadingScreen.innerText = "❌ Gagal memuat soal. Periksa koneksi atau URL API.";
+            loadingScreen.style.color = "red";
+        }
+    }
+
+    // Panggil fungsi saat web dibuka
+    muatSoalDariCloudflare();
+
+    // Logika Kuis
     function startSubject(subject) {
+        if(database[subject].length === 0) {
+            alert("Belum ada soal untuk pelajaran ini di database!");
+            return;
+        }
         currentSubject = subject;
         currentQuestionIndex = 0;
         mainMenu.style.display = 'none';
@@ -144,7 +146,6 @@
     }
 
     function checkAnswer(btn, selected, correct) {
-        // Disable semua tombol agar tidak diklik dua kali
         Array.from(optionsEl.children).forEach(b => b.style.pointerEvents = 'none');
         
         if (selected === correct) {
@@ -152,7 +153,6 @@
             score += 10;
             scoreEl.innerText = score;
             
-            // Lanjut soal berikutnya jika ada
             setTimeout(() => {
                 currentQuestionIndex++;
                 if (currentQuestionIndex < database[currentSubject].length) {
@@ -165,7 +165,6 @@
             }, 1000);
         } else {
             btn.classList.add('wrong');
-            // Kasih tahu jawaban yang benar
             Array.from(optionsEl.children).forEach(b => {
                 if (b.innerText === correct) b.classList.add('correct');
             });
