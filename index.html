@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduKids: Petualangan Belajar</title>
+    <style>
+        :root {
+            --primary: #FF6B6B;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --bg: #F7F9FC;
+            --text: #2D3436;
+        }
+        * { box-sizing: border-box; font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; }
+        body { margin: 0; padding: 20px; background-color: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        #app { max-width: 800px; width: 100%; background: white; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); overflow: hidden; }
+        header { background: var(--primary); color: white; padding: 20px; text-align: center; border-radius: 24px 24px 0 0; }
+        h1 { margin: 0; font-size: 28px; }
+        .score-board { font-size: 18px; font-weight: bold; background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px; display: inline-block; margin-top: 10px; }
+        main { padding: 30px; text-align: center; min-height: 400px; display: flex; flex-direction: column; justify-content: center; }
+        .menu-grid { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+        .card { background: var(--secondary); color: white; padding: 40px 20px; border-radius: 20px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; width: 200px; font-size: 24px; font-weight: bold; border: none; outline: none; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(78, 205, 196, 0.4); }
+        .card.math { background: var(--secondary); }
+        .card.ipas { background: var(--primary); }
+        
+        .quiz-container { display: none; flex-direction: column; align-items: center; width: 100%; }
+        .visual-model { font-size: 40px; margin: 20px 0; background: var(--bg); padding: 15px; border-radius: 15px; width: 100%; letter-spacing: 5px; }
+        .question-text { font-size: 22px; margin-bottom: 30px; line-height: 1.5; }
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; max-width: 500px; }
+        .btn-option { padding: 15px; font-size: 20px; border: 3px solid #E2E8F0; background: white; border-radius: 15px; cursor: pointer; transition: all 0.2s; font-weight: bold; color: var(--text); }
+        .btn-option:hover { border-color: var(--secondary); background: #E6FFFA; }
+        .btn-option.correct { background: #48BB78; color: white; border-color: #48BB78; }
+        .btn-option.wrong { background: #F56565; color: white; border-color: #F56565; }
+        
+        .nav-btn { margin-top: 30px; padding: 10px 20px; font-size: 18px; background: var(--accent); border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        
+        /* Responsive for Tablet/Mobile */
+        @media (max-width: 600px) {
+            .options { grid-template-columns: 1fr; }
+            .card { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <header>
+        <h1>🚀 EduKids Explorer</h1>
+        <div class="score-board">Bintang Misi: <span id="score">0</span> ⭐️</div>
+    </header>
+    
+    <main>
+        <!-- Menu Utama -->
+        <div id="main-menu" class="menu-grid">
+            <button class="card math" onclick="startSubject('math')">
+                🧮<br>Matematika<br><span style="font-size:14px;font-weight:normal">(Singapore & Cambridge)</span>
+            </button>
+            <button class="card ipas" onclick="startSubject('ipas')">
+                🌍<br>IPAS<br><span style="font-size:14px;font-weight:normal">(Kurikulum Merdeka)</span>
+            </button>
+        </div>
+
+        <!-- Area Kuis -->
+        <div id="quiz-area" class="quiz-container">
+            <div id="visual" class="visual-model"></div>
+            <div id="question" class="question-text"></div>
+            <div id="options" class="options"></div>
+            <button class="nav-btn" onclick="goHome()">🏠 Kembali ke Markas</button>
+        </div>
+    </main>
+</div>
+
+<script>
+    // Database Soal
+    const database = {
+        math: [
+            {
+                // Pendekatan Singapore Math (Visualisasi Bar Model)
+                visual: "🍎🍎🍎 + 🍎🍎🍎",
+                q: "Jika 1 keranjang berisi 3 apel, berapa apel di 2 keranjang? (Berpikir: 2 kelompok dari 3)",
+                options: ["5", "6", "9", "4"],
+                ans: "6"
+            },
+            {
+                // Pendekatan Cambridge (Logika & Critical Thinking)
+                visual: "🟨🟨🟨 ➡️ 🟦",
+                q: "Setiap 3 blok kuning bisa ditukar dengan 1 blok biru. Jika kamu punya 9 blok kuning, berapa blok biru yang kamu dapat?",
+                options: ["2", "3", "4", "9"],
+                ans: "3"
+            }
+        ],
+        ipas: [
+            {
+                // Kurikulum Merdeka (Kontekstual - Wujud Benda)
+                visual: "🧊 ➡️ ☀️ ➡️ 💧",
+                q: "Es batu yang diletakkan di bawah sinar matahari akan berubah wujud dari...",
+                options: ["Cair ke Padat", "Padat ke Gas", "Padat ke Cair", "Gas ke Cair"],
+                ans: "Padat ke Cair"
+            },
+            {
+                // Kurikulum Merdeka (Makhluk Hidup & Lingkungan)
+                visual: "🌱 ☀️ 💧",
+                q: "Tanaman butuh sinar matahari dan air untuk membuat makanannya sendiri. Proses ini disebut...",
+                options: ["Mencair", "Fotosintesis", "Bernapas", "Berkembang biak"],
+                ans: "Fotosintesis"
+            }
+        ]
+    };
+
+    let currentSubject = '';
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    const mainMenu = document.getElementById('main-menu');
+    const quizArea = document.getElementById('quiz-area');
+    const visualEl = document.getElementById('visual');
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const scoreEl = document.getElementById('score');
+
+    function startSubject(subject) {
+        currentSubject = subject;
+        currentQuestionIndex = 0;
+        mainMenu.style.display = 'none';
+        quizArea.style.display = 'flex';
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        const qData = database[currentSubject][currentQuestionIndex];
+        visualEl.innerHTML = qData.visual;
+        questionEl.innerHTML = qData.q;
+        optionsEl.innerHTML = '';
+
+        qData.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-option';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(btn, opt, qData.ans);
+            optionsEl.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(btn, selected, correct) {
+        // Disable semua tombol agar tidak diklik dua kali
+        Array.from(optionsEl.children).forEach(b => b.style.pointerEvents = 'none');
+        
+        if (selected === correct) {
+            btn.classList.add('correct');
+            score += 10;
+            scoreEl.innerText = score;
+            
+            // Lanjut soal berikutnya jika ada
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < database[currentSubject].length) {
+                    loadQuestion();
+                } else {
+                    visualEl.innerHTML = "🎉🎉🎉";
+                    questionEl.innerHTML = "Misi Selesai! Kamu Hebat!";
+                    optionsEl.innerHTML = '';
+                }
+            }, 1000);
+        } else {
+            btn.classList.add('wrong');
+            // Kasih tahu jawaban yang benar
+            Array.from(optionsEl.children).forEach(b => {
+                if (b.innerText === correct) b.classList.add('correct');
+            });
+            
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < database[currentSubject].length) {
+                    loadQuestion();
+                } else {
+                    visualEl.innerHTML = "💪✨";
+                    questionEl.innerHTML = "Misi Selesai! Terus berlatih ya!";
+                    optionsEl.innerHTML = '';
+                }
+            }, 2000);
+        }
+    }
+
+    function goHome() {
+        quizArea.style.display = 'none';
+        mainMenu.style.display = 'flex';
+    }
+</script>
+
+</body>
+</html>
