@@ -3,100 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <title>EduKids: Petualangan Belajar</title>
+    
+    <!-- Library Eksternal -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
-     :root {
-    --primary: #FF6B6B;
-    --secondary: #4ECDC4;
-    --accent: #FFE66D;
-    --bg: #F7F9FC;
-    --text: #2D3436;
-}
-* { box-sizing: border-box; font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; }
+        :root {
+            --primary: #FF6B6B;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --bg-overlay: rgba(255, 255, 255, 0.65);
+            --text: #2D3436;
+        }
+        * { box-sizing: border-box; font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; }
 
-/* Animasi Latar Belakang Gradien Bergerak */
-body { 
-    margin: 0; padding: 20px; color: var(--text); 
-    display: flex; justify-content: center; align-items: center; min-height: 100vh;
-    background: linear-gradient(-45deg, #FF9A9E, #FECFEF, #A1C4FD, #C2E9FB);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
-}
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
+        /* Wallpaper Dinamis dengan Transisi Halus */
+        body { 
+            margin: 0; padding: 20px; color: var(--text); 
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            background-color: #8EC5FC;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: background-image 2s ease-in-out;
+        }
 
-#app { 
-    max-width: 800px; width: 100%; background: rgba(255, 255, 255, 0.9); 
-    border-radius: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
-    backdrop-filter: blur(10px); overflow: hidden; 
-}
-header { background: var(--primary); color: white; padding: 20px; text-align: center; border-radius: 30px 30px 0 0; }
-h1 { margin: 0; font-size: 28px; text-shadow: 2px 2px 0px rgba(0,0,0,0.1); }
-.score-board { font-size: 18px; font-weight: bold; background: rgba(255,255,255,0.3); padding: 8px 20px; border-radius: 20px; display: inline-block; margin-top: 10px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); }
+        /* Latar Belakang Aplikasi Kaca (Glassmorphism + Claymorphism) */
+        #app { 
+            max-width: 800px; width: 100%; 
+            background: var(--bg-overlay); 
+            border-radius: 30px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.5); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            overflow: hidden; 
+            z-index: 10;
+        }
+        
+        header { background: var(--primary); color: white; padding: 20px; text-align: center; border-radius: 30px 30px 0 0; }
+        h1 { margin: 0; font-size: 28px; text-shadow: 2px 2px 0px rgba(0,0,0,0.1); }
+        .score-board { font-size: 18px; font-weight: bold; background: rgba(255,255,255,0.3); padding: 8px 20px; border-radius: 20px; display: inline-block; margin-top: 10px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); }
 
-main { padding: 30px; text-align: center; min-height: 400px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        main { padding: 30px; text-align: center; min-height: 400px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
 
-#loading-screen { font-size: 20px; font-weight: bold; color: var(--secondary); margin-bottom: 20px; animation: pulse 1.5s infinite; }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        #loading-screen { font-size: 20px; font-weight: bold; color: var(--primary); margin-bottom: 20px; animation: pulse 1.5s infinite; background: white; padding: 10px 20px; border-radius: 20px;}
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-.menu-grid { display: none; gap: 20px; justify-content: center; flex-wrap: wrap; width: 100%; }
+        .menu-grid { display: none; gap: 20px; justify-content: center; flex-wrap: wrap; width: 100%; }
 
-/* Gaya Claymorphism untuk Kartu Menu */
-.card { 
-    background: var(--secondary); color: white; padding: 40px 20px; border-radius: 25px; 
-    cursor: pointer; width: 220px; font-size: 26px; font-weight: bold; border: none; outline: none;
-    box-shadow: 8px 8px 16px rgba(0,0,0,0.1), -8px -8px 16px rgba(255,255,255,0.8), inset 0 -5px 15px rgba(0,0,0,0.1);
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-.card.ipas { background: var(--primary); }
-.card:hover { transform: translateY(-8px) scale(1.03); box-shadow: 12px 12px 20px rgba(0,0,0,0.15), -12px -12px 20px rgba(255,255,255,0.9); }
-.card:active { transform: scale(0.95); }
+        /* Kartu Menu Claymorphism */
+        .card { 
+            background: var(--secondary); color: white; padding: 40px 20px; border-radius: 25px; 
+            cursor: pointer; width: 220px; font-size: 26px; font-weight: bold; border: none; outline: none;
+            box-shadow: 8px 8px 16px rgba(0,0,0,0.15), -8px -8px 16px rgba(255,255,255,0.5), inset 0 -5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .card.ipas { background: var(--primary); }
+        .card:hover { transform: translateY(-8px) scale(1.03); box-shadow: 12px 12px 20px rgba(0,0,0,0.2), -12px -12px 20px rgba(255,255,255,0.6); }
+        .card:active { transform: scale(0.95); }
 
-.quiz-container { display: none; flex-direction: column; align-items: center; width: 100%; }
+        .quiz-container { display: none; flex-direction: column; align-items: center; width: 100%; }
 
-/* Animasi Mengambang pada Visual Soal */
-.visual-model { 
-    font-size: 50px; margin: 20px 0; background: rgba(255,255,255,0.5); 
-    padding: 20px; border-radius: 20px; width: 100%; letter-spacing: 5px;
-    box-shadow: inset 0 5px 10px rgba(0,0,0,0.05);
-    animation: float 3s ease-in-out infinite;
-}
-@keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
-}
+        /* Visual Mengambang */
+        .visual-model { 
+            font-size: 50px; margin: 20px 0; background: rgba(255,255,255,0.7); 
+            padding: 20px; border-radius: 20px; width: 100%; letter-spacing: 5px;
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.05);
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
 
-.question-text { font-size: 24px; margin-bottom: 30px; line-height: 1.5; font-weight: bold; color: #4a4a4a; }
-.options { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 600px; }
+        .question-text { font-size: 24px; margin-bottom: 30px; line-height: 1.5; font-weight: bold; color: #333; background: rgba(255,255,255,0.6); padding: 15px; border-radius: 15px; }
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 600px; }
 
-/* Gaya Tombol Pilihan Ganda */
-.btn-option { 
-    padding: 20px; font-size: 22px; border: none; background: #f0f3f5; 
-    border-radius: 20px; cursor: pointer; font-weight: bold; color: var(--text); 
-    box-shadow: 5px 5px 10px rgba(0,0,0,0.05), -5px -5px 10px rgba(255,255,255,1);
-    transition: all 0.2s;
-}
-.btn-option:active { transform: scale(0.95); box-shadow: inset 5px 5px 10px rgba(0,0,0,0.05), inset -5px -5px 10px rgba(255,255,255,1); }
+        /* Pilihan Ganda */
+        .btn-option { 
+            padding: 20px; font-size: 22px; border: none; background: #ffffff; 
+            border-radius: 20px; cursor: pointer; font-weight: bold; color: var(--text); 
+            box-shadow: 5px 5px 10px rgba(0,0,0,0.1), -5px -5px 10px rgba(255,255,255,0.8);
+            transition: all 0.2s;
+        }
+        .btn-option:active { transform: scale(0.95); box-shadow: inset 5px 5px 10px rgba(0,0,0,0.05), inset -5px -5px 10px rgba(255,255,255,1); }
 
-/* Animasi Jawaban Benar & Salah */
-.correct-pop { animation: pop 0.5s forwards; background: #48BB78 !important; color: white !important; box-shadow: 0 10px 20px rgba(72, 187, 120, 0.4) !important; }
-@keyframes pop { 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        .correct-pop { animation: pop 0.5s forwards; background: #48BB78 !important; color: white !important; box-shadow: 0 10px 20px rgba(72, 187, 120, 0.4) !important; }
+        @keyframes pop { 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-.wrong-shake { animation: shake 0.4s; background: #F56565 !important; color: white !important; box-shadow: inset 0 3px 6px rgba(0,0,0,0.2) !important; }
-@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        .wrong-shake { animation: shake 0.4s; background: #F56565 !important; color: white !important; box-shadow: inset 0 3px 6px rgba(0,0,0,0.2) !important; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
 
-.nav-btn { margin-top: 40px; padding: 15px 30px; font-size: 20px; background: var(--accent); border: none; border-radius: 15px; cursor: pointer; font-weight: bold; box-shadow: 0 5px 15px rgba(255, 230, 109, 0.4); transition: transform 0.2s; }
-.nav-btn:hover { transform: scale(1.05); }
+        .nav-btn { margin-top: 40px; padding: 15px 30px; font-size: 20px; background: var(--accent); border: none; border-radius: 15px; cursor: pointer; font-weight: bold; box-shadow: 0 5px 15px rgba(255, 230, 109, 0.4); transition: transform 0.2s; }
+        .nav-btn:hover { transform: scale(1.05); }
 
-@media (max-width: 600px) { .options { grid-template-columns: 1fr; } .card { width: 100%; max-width: 300px; } }
+        /* --- Animasi Gelembung --- */
+        .bubbles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: hidden; pointer-events: none; }
+        .bubble { position: absolute; bottom: -100px; background-color: rgba(255, 255, 255, 0.3); border-radius: 50%; box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5); animation: fly 10s infinite ease-in; }
+        .bubble:nth-child(1) { width: 40px; height: 40px; left: 10%; animation-duration: 8s; }
+        .bubble:nth-child(2) { width: 80px; height: 80px; left: 20%; animation-duration: 11s; animation-delay: 1s; }
+        .bubble:nth-child(3) { width: 50px; height: 50px; left: 35%; animation-duration: 7s; animation-delay: 2s; }
+        .bubble:nth-child(4) { width: 90px; height: 90px; left: 50%; animation-duration: 12s; animation-delay: 0s; }
+        .bubble:nth-child(5) { width: 35px; height: 35px; left: 65%; animation-duration: 6s; animation-delay: 3s; }
+        .bubble:nth-child(6) { width: 60px; height: 60px; left: 80%; animation-duration: 9s; animation-delay: 1s; }
+        .bubble:nth-child(7) { width: 70px; height: 70px; left: 90%; animation-duration: 10s; animation-delay: 2s; }
+        @keyframes fly { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-110vh) scale(1.5); opacity: 0; } }
+
+        /* SweetAlert2 Kids Style */
+        div:where(.swal2-container) { font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif !important; z-index: 9999; }
+        .swal2-popup { border-radius: 25px !important; background: rgba(255,255,255,0.95) !important; backdrop-filter: blur(10px); }
+
+        @media (max-width: 600px) { .options { grid-template-columns: 1fr; } .card { width: 100%; max-width: 300px; } }
     </style>
 </head>
 <body>
+
+<!-- Efek Latar Gelembung -->
+<div class="bubbles">
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+</div>
 
 <div id="app">
     <header>
@@ -106,22 +131,19 @@ main { padding: 30px; text-align: center; min-height: 400px; display: flex; flex
     
     <main>
         <!-- Status Loading -->
-        <div id="loading-screen">⏳ Memanggil soal dari markas (Cloudflare)...</div>
+        <div id="loading-screen">⏳ Memanggil soal dari markas...</div>
 
         <!-- Menu Utama -->
         <div id="main-menu" class="menu-grid">
-            <button class="card math" onclick="startSubject('math')">
-                🧮<br>Matematika
-            </button>
-            <button class="card ipas" onclick="startSubject('ipas')">
-                🌍<br>IPAS
-            </button>
+            <button class="card math" onclick="startSubject('math')">🧮<br>Matematika</button>
+            <button class="card ipas" onclick="startSubject('ipas')">🌍<br>IPAS</button>
         </div>
-        <!-- Area Papan Peringkat -->
-<div id="leaderboard-area" style="display:none; width: 100%; max-width: 500px; background: white; padding: 20px; border-radius: 20px; margin-top: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
-    <h3 style="margin-top:0; color: var(--text);">🏆 Top 10 Bintang Terbanyak</h3>
-    <div id="leaderboard-list" style="text-align: left; font-size: 18px;"></div>
-</div>
+
+        <!-- Leaderboard -->
+        <div id="leaderboard-area" style="display:none; width: 100%; max-width: 500px; background: rgba(255,255,255,0.8); padding: 20px; border-radius: 20px; margin-top: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+            <h3 style="margin-top:0; color: var(--text);">🏆 Top 10 Bintang Terbanyak</h3>
+            <div id="leaderboard-list" style="text-align: left; font-size: 18px;"></div>
+        </div>
 
         <!-- Area Kuis -->
         <div id="quiz-area" class="quiz-container">
@@ -134,7 +156,24 @@ main { padding: 30px; text-align: center; min-height: 400px; display: flex; flex
 </div>
 
 <script>
-    // Variabel awal
+    // --- KONFIGURASI API & AUDIO ---
+    const urlAPI = 'https://edukids-api.busan6202.workers.dev'; 
+    
+    // Audio (Pastikan file benar.mp3 dan salah.mp3 ada di folder yang sama)
+    const suaraBenar = new Audio('benar.mp3');
+    const suaraSalah = new Audio('salah.mp3');
+
+    // --- FITUR GANTI WALLPAPER OTOMATIS ---
+    function gantiBackground() {
+        const randomNum = Math.floor(Math.random() * 1000);
+        const bgUrl = `url('https://picsum.photos/1920/1080?random=${randomNum}')`;
+        // Overlay gradien transparan agar teks tetap terbaca jelas
+        document.body.style.backgroundImage = `linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(142, 197, 252, 0.6) 100%), ${bgUrl}`;
+    }
+    gantiBackground(); // Panggil saat web dibuka
+    setInterval(gantiBackground, 60000); // Ganti tiap 60 detik
+
+    // --- VARIABEL KUIS ---
     let database = { math: [], ipas: [] };
     let currentSubject = '';
     let currentQuestionIndex = 0;
@@ -148,39 +187,96 @@ main { padding: 30px; text-align: center; min-height: 400px; display: flex; flex
     const optionsEl = document.getElementById('options');
     const scoreEl = document.getElementById('score');
 
-    // MENGAMBIL DATA DARI CLOUDFLARE API
+    // --- MENGAMBIL DATA DARI CLOUDFLARE API ---
     async function muatSoalDariCloudflare() {
         try {
-            // ---> GANTI URL DI BAWAH INI DENGAN URL WORKERS ANDA (misal: https://edukids-api.username.workers.dev) <---
-            const urlAPI = 'https://edukids-api.busan6202.workers.dev'; 
-            
             const response = await fetch(urlAPI);
             database = await response.json();
             
-            // Sembunyikan loading, tampilkan menu
             loadingScreen.style.display = 'none';
             mainMenu.style.display = 'flex';
-            
-            console.log("✅ Soal berhasil dimuat dari database Cloudflare!");
+            muatLeaderboard();
         } catch (error) {
             console.error("Gagal memuat soal:", error);
-            loadingScreen.innerText = "❌ Gagal memuat soal. Periksa koneksi atau URL API.";
+            loadingScreen.innerText = "❌ Gagal memuat soal. Periksa koneksi internet.";
             loadingScreen.style.color = "red";
         }
     }
-
-    // Panggil fungsi saat web dibuka
     muatSoalDariCloudflare();
 
-    // Logika Kuis
+    // --- LOGIKA LEADERBOARD ---
+    async function muatLeaderboard() {
+        try {
+            const response = await fetch(urlAPI + '/leaderboard');
+            const data = await response.json();
+            
+            const lbList = document.getElementById('leaderboard-list');
+            lbList.innerHTML = '';
+            
+            if(data.length > 0) {
+                data.forEach((item, index) => {
+                    const medali = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '⭐';
+                    lbList.innerHTML += `<div style="padding: 10px 0; border-bottom: 1px dashed #ccc; font-weight: bold;">
+                        ${medali} ${item.nama} - ${item.skor} Poin <span style="font-size:14px; color:#666;">(${item.mata_pelajaran.toUpperCase()})</span>
+                    </div>`;
+                });
+                document.getElementById('leaderboard-area').style.display = 'block';
+            }
+        } catch (error) {
+            console.error("Gagal memuat leaderboard");
+        }
+    }
+
+    async function simpanSkorKeDatabase() {
+        // Popup SweetAlert2 Animasi
+        const { value: namaPemain } = await Swal.fire({
+            title: '🎉 Luar Biasa!',
+            text: `Misi selesai! Kamu mengumpulkan ${score} Bintang. Siapa nama pahlawan kita hari ini?`,
+            input: 'text',
+            inputPlaceholder: 'Ketik namamu di sini...',
+            confirmButtonColor: '#4ECDC4',
+            confirmButtonText: 'Kirim Skor! 🚀',
+            allowOutsideClick: false,
+            imageUrl: 'https://cdn-icons-png.flaticon.com/512/3135/3135823.png', 
+            imageWidth: 100,
+            imageHeight: 100,
+        });
+
+        if (!namaPemain) { goHome(); return; }
+
+        try {
+            await fetch(urlAPI + '/simpan-skor', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nama: namaPemain, mata_pelajaran: currentSubject, skor: score })
+            });
+            
+            Swal.fire({
+                title: 'Tersimpan!',
+                text: 'Skor kamu sudah aman di markas!',
+                icon: 'success',
+                confirmButtonColor: '#FF6B6B'
+            }).then(() => { goHome(); });
+
+        } catch (error) {
+            Swal.fire('Ups!', 'Gagal menyambung ke markas. Coba cek internetmu.', 'error');
+            goHome();
+        }
+    }
+
+    // --- LOGIKA KUIS ---
     function startSubject(subject) {
         if(database[subject].length === 0) {
-            alert("Belum ada soal untuk pelajaran ini di database!");
+            Swal.fire('Wah!', 'Belum ada soal untuk pelajaran ini.', 'info');
             return;
         }
         currentSubject = subject;
         currentQuestionIndex = 0;
+        score = 0; // Reset skor tiap mulai baru
+        scoreEl.innerText = score;
+        
         mainMenu.style.display = 'none';
+        document.getElementById('leaderboard-area').style.display = 'none';
         quizArea.style.display = 'flex';
         loadQuestion();
     }
@@ -200,111 +296,52 @@ main { padding: 30px; text-align: center; min-height: 400px; display: flex; flex
         });
     }
 
-function checkAnswer(btn, selected, correct) {
-    // Matikan klik ganda
-    Array.from(optionsEl.children).forEach(b => b.style.pointerEvents = 'none');
-    
-    if (selected === correct) {
-        // Tambahkan efek membesar dan hijau
-        btn.classList.add('correct-pop');
+    function checkAnswer(btn, selected, correct) {
+        Array.from(optionsEl.children).forEach(b => b.style.pointerEvents = 'none');
         
-        // Picu ledakan confetti dari tengah bawah layar
-        confetti({
-            particleCount: 150,
-            spread: 80,
-            origin: { y: 0.6 },
-            colors: ['#FF6B6B', '#4ECDC4', '#FFE66D']
-        });
+        if (selected === correct) {
+            suaraBenar.play().catch(e => console.log("Audio belum siap")); // Antisipasi error browser policy
+            btn.classList.add('correct-pop');
+            
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#FF6B6B', '#4ECDC4', '#FFE66D'] });
 
-        score += 10;
-        scoreEl.innerText = score;
-        
-        setTimeout(() => {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < database[currentSubject].length) {
-                loadQuestion();
-            } else {
-                visualEl.innerHTML = "🎉🎉🎉";
-                questionEl.innerHTML = "Misi Selesai! Kamu Hebat!";
-                optionsEl.innerHTML = '';
-                setTimeout(simpanSkorKeDatabase, 1500); // Tunggu sebentar sebelum minta nama
-            }
-        }, 1500); // Jeda diperpanjang agar anak bisa menikmati confetti
-        
-    } else {
-        // Tambahkan efek getar dan merah
-        btn.classList.add('wrong-shake');
-        
-        // Tunjukkan jawaban yang benar
-        Array.from(optionsEl.children).forEach(b => {
-            if (b.innerText === correct) b.classList.add('correct-pop');
-        });
-        
-        setTimeout(() => {
-            currentQuestionIndex++;
-            if (currentQuestionIndex < database[currentSubject].length) {
-                loadQuestion();
-            } else {
-                visualEl.innerHTML = "💪✨";
-                questionEl.innerHTML = "Misi Selesai! Terus berlatih ya!";
-                optionsEl.innerHTML = '';
-                setTimeout(simpanSkorKeDatabase, 1500);
-            }
-        }, 2500);
+            score += 10;
+            scoreEl.innerText = score;
+            
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < database[currentSubject].length) { loadQuestion(); } 
+                else { akhirKuis(); }
+            }, 1500);
+            
+        } else {
+            suaraSalah.play().catch(e => console.log("Audio belum siap"));
+            btn.classList.add('wrong-shake');
+            
+            Array.from(optionsEl.children).forEach(b => {
+                if (b.innerText === correct) b.classList.add('correct-pop');
+            });
+            
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < database[currentSubject].length) { loadQuestion(); } 
+                else { akhirKuis(); }
+            }, 2500);
+        }
     }
-}
+
+    function akhirKuis() {
+        visualEl.innerHTML = "🎉🎉🎉";
+        questionEl.innerHTML = "Semua pertanyaan selesai dijawab!";
+        optionsEl.innerHTML = '';
+        setTimeout(simpanSkorKeDatabase, 1500);
     }
 
     function goHome() {
         quizArea.style.display = 'none';
         mainMenu.style.display = 'flex';
+        muatLeaderboard(); // Update leaderboard saat kembali ke depan
     }
-    // Fungsi untuk mengambil data leaderboard dari API
-async function muatLeaderboard() {
-    try {
-        const urlAPI = 'https://edukids-api.busan6202.workers.dev'; // Ganti dengan URL Worker Anda
-        const response = await fetch(urlAPI + '/leaderboard');
-        const data = await response.json();
-        
-        const lbList = document.getElementById('leaderboard-list');
-        lbList.innerHTML = '';
-        
-        data.forEach((item, index) => {
-            const medali = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '⭐️️';
-            lbList.innerHTML += `<div style="padding: 10px 0; border-bottom: 1px solid #eee;">
-                ${medali} <b>${item.nama}</b> - ${item.skor} Poin (${item.mata_pelajaran.toUpperCase()})
-            </div>`;
-        });
-        
-        document.getElementById('leaderboard-area').style.display = 'block';
-    } catch (error) {
-        console.error("Gagal memuat leaderboard");
-    }
-}
-
-// Fungsi untuk menyimpan skor
-async function simpanSkorKeDatabase() {
-    const namaPemain = prompt("Wow! Kuis selesai. Siapa namamu?");
-    if (!namaPemain) return;
-
-    try {
-        const urlAPI = 'https://edukids-api.busan6202.workers.dev'; // Ganti dengan URL Worker Anda
-        await fetch(urlAPI + '/simpan-skor', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                nama: namaPemain,
-                mata_pelajaran: currentSubject,
-                skor: score
-            })
-        });
-        alert("Skor berhasil disimpan ke markas!");
-        goHome();
-    } catch (error) {
-        alert("Ups, gagal menyimpan skor.");
-    }
-}
 </script>
-
 </body>
 </html>
