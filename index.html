@@ -195,7 +195,7 @@ setTimeout(simpanSkorKeDatabase, 500); // Panggil form nama
     // Fungsi untuk mengambil data leaderboard dari API
 async function muatLeaderboard() {
     try {
-        const urlAPI = 'MASUKKAN_URL_WORKER_ANDA_DISINI'; // Ganti dengan URL Worker Anda
+        const urlAPI = 'https://edukids-api.busan6202.workers.dev'; // Ganti dengan URL Worker Anda
         const response = await fetch(urlAPI + '/leaderboard');
         const data = await response.json();
         
@@ -221,7 +221,7 @@ async function simpanSkorKeDatabase() {
     if (!namaPemain) return;
 
     try {
-        const urlAPI = 'MASUKKAN_URL_WORKER_ANDA_DISINI'; // Ganti dengan URL Worker Anda
+        const urlAPI = 'https://edukids-api.busan6202.workers.dev'; // Ganti dengan URL Worker Anda
         await fetch(urlAPI + '/simpan-skor', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
