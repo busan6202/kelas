@@ -163,9 +163,10 @@
                 if (currentQuestionIndex < database[currentSubject].length) {
                     loadQuestion();
                 } else {
-                    visualEl.innerHTML = "🎉🎉🎉";
-                    questionEl.innerHTML = "Misi Selesai! Kamu Hebat!";
-                    optionsEl.innerHTML = '';
+                   visualEl.innerHTML = "🎉🎉🎉";
+questionEl.innerHTML = "Misi Selesai! Kamu Hebat!";
+optionsEl.innerHTML = '';
+setTimeout(simpanSkorKeDatabase, 500); // Panggil form nama
                 }
             }, 1000);
         } else {
@@ -191,6 +192,51 @@
         quizArea.style.display = 'none';
         mainMenu.style.display = 'flex';
     }
+    // Fungsi untuk mengambil data leaderboard dari API
+async function muatLeaderboard() {
+    try {
+        const urlAPI = 'MASUKKAN_URL_WORKER_ANDA_DISINI'; // Ganti dengan URL Worker Anda
+        const response = await fetch(urlAPI + '/leaderboard');
+        const data = await response.json();
+        
+        const lbList = document.getElementById('leaderboard-list');
+        lbList.innerHTML = '';
+        
+        data.forEach((item, index) => {
+            const medali = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '⭐️️';
+            lbList.innerHTML += `<div style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                ${medali} <b>${item.nama}</b> - ${item.skor} Poin (${item.mata_pelajaran.toUpperCase()})
+            </div>`;
+        });
+        
+        document.getElementById('leaderboard-area').style.display = 'block';
+    } catch (error) {
+        console.error("Gagal memuat leaderboard");
+    }
+}
+
+// Fungsi untuk menyimpan skor
+async function simpanSkorKeDatabase() {
+    const namaPemain = prompt("Wow! Kuis selesai. Siapa namamu?");
+    if (!namaPemain) return;
+
+    try {
+        const urlAPI = 'MASUKKAN_URL_WORKER_ANDA_DISINI'; // Ganti dengan URL Worker Anda
+        await fetch(urlAPI + '/simpan-skor', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                nama: namaPemain,
+                mata_pelajaran: currentSubject,
+                skor: score
+            })
+        });
+        alert("Skor berhasil disimpan ke markas!");
+        goHome();
+    } catch (error) {
+        alert("Ups, gagal menyimpan skor.");
+    }
+}
 </script>
 
 </body>
