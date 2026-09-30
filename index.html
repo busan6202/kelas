@@ -14,12 +14,12 @@
             --primary: #FF6B6B;
             --secondary: #4ECDC4;
             --accent: #FFE66D;
-            --bg-overlay: rgba(255, 255, 255, 0.65);
+            --bg-overlay: rgba(255, 255, 255, 0.85); /* Dipertebal agar kuis tetap terbaca di atas gambar ramai */
             --text: #2D3436;
         }
         * { box-sizing: border-box; font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; }
 
-        /* Wallpaper Dinamis dengan Transisi Halus */
+        /* Wallpaper Dinamis Kartun/Poster */
         body { 
             margin: 0; padding: 20px; color: var(--text); 
             display: flex; justify-content: center; align-items: center; min-height: 100vh;
@@ -35,21 +35,21 @@
             max-width: 800px; width: 100%; 
             background: var(--bg-overlay); 
             border-radius: 30px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,255,255,0.5); 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3), inset 0 0 0 4px rgba(255,255,255,0.8); 
+            backdrop-filter: blur(15px); 
+            -webkit-backdrop-filter: blur(15px);
             overflow: hidden; 
             z-index: 10;
         }
         
         header { background: var(--primary); color: white; padding: 20px; text-align: center; border-radius: 30px 30px 0 0; }
         h1 { margin: 0; font-size: 28px; text-shadow: 2px 2px 0px rgba(0,0,0,0.1); }
-        .score-board { font-size: 18px; font-weight: bold; background: rgba(255,255,255,0.3); padding: 8px 20px; border-radius: 20px; display: inline-block; margin-top: 10px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); }
+        .score-board { font-size: 18px; font-weight: bold; background: rgba(255,255,255,0.3); padding: 8px 20px; border-radius: 20px; display: inline-block; margin-top: 10px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.1); border: 2px solid rgba(255,255,255,0.5); }
 
         main { padding: 30px; text-align: center; min-height: 400px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
 
-        #loading-screen { font-size: 20px; font-weight: bold; color: var(--primary); margin-bottom: 20px; animation: pulse 1.5s infinite; background: white; padding: 10px 20px; border-radius: 20px;}
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        #loading-screen { font-size: 20px; font-weight: bold; color: var(--primary); margin-bottom: 20px; animation: pulse 1.5s infinite; background: white; padding: 15px 30px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 3px dashed var(--secondary);}
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 
         .menu-grid { display: none; gap: 20px; justify-content: center; flex-wrap: wrap; width: 100%; }
 
@@ -57,25 +57,26 @@
         .card { 
             background: var(--secondary); color: white; padding: 40px 20px; border-radius: 25px; 
             cursor: pointer; width: 220px; font-size: 26px; font-weight: bold; border: none; outline: none;
-            box-shadow: 8px 8px 16px rgba(0,0,0,0.15), -8px -8px 16px rgba(255,255,255,0.5), inset 0 -5px 15px rgba(0,0,0,0.1);
+            box-shadow: 8px 8px 16px rgba(0,0,0,0.15), -8px -8px 16px rgba(255,255,255,0.8), inset 0 -5px 15px rgba(0,0,0,0.1);
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         .card.ipas { background: var(--primary); }
-        .card:hover { transform: translateY(-8px) scale(1.03); box-shadow: 12px 12px 20px rgba(0,0,0,0.2), -12px -12px 20px rgba(255,255,255,0.6); }
+        .card:hover { transform: translateY(-8px) scale(1.03); box-shadow: 12px 12px 20px rgba(0,0,0,0.2), -12px -12px 20px rgba(255,255,255,0.9); }
         .card:active { transform: scale(0.95); }
 
         .quiz-container { display: none; flex-direction: column; align-items: center; width: 100%; }
 
         /* Visual Mengambang */
         .visual-model { 
-            font-size: 50px; margin: 20px 0; background: rgba(255,255,255,0.7); 
+            font-size: 50px; margin: 20px 0; background: rgba(255,255,255,0.9); 
             padding: 20px; border-radius: 20px; width: 100%; letter-spacing: 5px;
-            box-shadow: inset 0 5px 10px rgba(0,0,0,0.05);
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.05), 0 5px 15px rgba(0,0,0,0.05);
             animation: float 3s ease-in-out infinite;
+            border: 2px dashed #ccc;
         }
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
 
-        .question-text { font-size: 24px; margin-bottom: 30px; line-height: 1.5; font-weight: bold; color: #333; background: rgba(255,255,255,0.6); padding: 15px; border-radius: 15px; }
+        .question-text { font-size: 24px; margin-bottom: 30px; line-height: 1.5; font-weight: bold; color: #333; background: rgba(255,255,255,0.9); padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .options { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 600px; }
 
         /* Pilihan Ganda */
@@ -84,13 +85,15 @@
             border-radius: 20px; cursor: pointer; font-weight: bold; color: var(--text); 
             box-shadow: 5px 5px 10px rgba(0,0,0,0.1), -5px -5px 10px rgba(255,255,255,0.8);
             transition: all 0.2s;
+            border: 2px solid transparent;
         }
+        .btn-option:hover { border-color: var(--secondary); background: #f0fdfa; }
         .btn-option:active { transform: scale(0.95); box-shadow: inset 5px 5px 10px rgba(0,0,0,0.05), inset -5px -5px 10px rgba(255,255,255,1); }
 
-        .correct-pop { animation: pop 0.5s forwards; background: #48BB78 !important; color: white !important; box-shadow: 0 10px 20px rgba(72, 187, 120, 0.4) !important; }
+        .correct-pop { animation: pop 0.5s forwards; background: #48BB78 !important; color: white !important; box-shadow: 0 10px 20px rgba(72, 187, 120, 0.4) !important; border-color: #48BB78 !important; }
         @keyframes pop { 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-        .wrong-shake { animation: shake 0.4s; background: #F56565 !important; color: white !important; box-shadow: inset 0 3px 6px rgba(0,0,0,0.2) !important; }
+        .wrong-shake { animation: shake 0.4s; background: #F56565 !important; color: white !important; box-shadow: inset 0 3px 6px rgba(0,0,0,0.2) !important; border-color: #F56565 !important; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
 
         .nav-btn { margin-top: 40px; padding: 15px 30px; font-size: 20px; background: var(--accent); border: none; border-radius: 15px; cursor: pointer; font-weight: bold; box-shadow: 0 5px 15px rgba(255, 230, 109, 0.4); transition: transform 0.2s; }
@@ -98,7 +101,7 @@
 
         /* --- Animasi Gelembung --- */
         .bubbles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; overflow: hidden; pointer-events: none; }
-        .bubble { position: absolute; bottom: -100px; background-color: rgba(255, 255, 255, 0.3); border-radius: 50%; box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5); animation: fly 10s infinite ease-in; }
+        .bubble { position: absolute; bottom: -100px; background-color: rgba(255, 255, 255, 0.4); border-radius: 50%; box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.8); animation: fly 10s infinite ease-in; }
         .bubble:nth-child(1) { width: 40px; height: 40px; left: 10%; animation-duration: 8s; }
         .bubble:nth-child(2) { width: 80px; height: 80px; left: 20%; animation-duration: 11s; animation-delay: 1s; }
         .bubble:nth-child(3) { width: 50px; height: 50px; left: 35%; animation-duration: 7s; animation-delay: 2s; }
@@ -140,7 +143,7 @@
         </div>
 
         <!-- Leaderboard -->
-        <div id="leaderboard-area" style="display:none; width: 100%; max-width: 500px; background: rgba(255,255,255,0.8); padding: 20px; border-radius: 20px; margin-top: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+        <div id="leaderboard-area" style="display:none; width: 100%; max-width: 500px; background: rgba(255,255,255,0.9); padding: 20px; border-radius: 20px; margin-top: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 2px dashed var(--secondary);">
             <h3 style="margin-top:0; color: var(--text);">🏆 Top 10 Bintang Terbanyak</h3>
             <div id="leaderboard-list" style="text-align: left; font-size: 18px;"></div>
         </div>
@@ -159,17 +162,33 @@
     // --- KONFIGURASI API & AUDIO ---
     const urlAPI = 'https://edukids-api.busan6202.workers.dev'; 
     
-    // Audio (Pastikan file benar.mp3 dan salah.mp3 ada di folder yang sama)
     const suaraBenar = new Audio('benar.mp3');
     const suaraSalah = new Audio('salah.mp3');
 
-    // --- FITUR GANTI WALLPAPER OTOMATIS ---
+    // --- FITUR GANTI WALLPAPER POSTER/KARTUN ANAK DINAMIS ---
+    const temaWallpaperAnak = [
+        "colorful kids educational poster with cute animals cartoon",
+        "solar system space adventure cartoon poster for kids",
+        "underwater ocean sea life cartoon poster background",
+        "mathematics doodle colorful poster cartoon background",
+        "magic forest with cute dinosaurs cartoon poster",
+        "alphabet and numbers colorful poster background for kids",
+        "safari jungle cute animals cartoon background poster"
+    ];
+
     function gantiBackground() {
-        const randomNum = Math.floor(Math.random() * 1000);
-        const bgUrl = `url('https://picsum.photos/1920/1080?random=${randomNum}')`;
-        // Overlay gradien transparan agar teks tetap terbaca jelas
-        document.body.style.backgroundImage = `linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(142, 197, 252, 0.6) 100%), ${bgUrl}`;
+        // Pilih salah satu tema poster secara acak
+        const temaAcak = temaWallpaperAnak[Math.floor(Math.random() * temaWallpaperAnak.length)];
+        const formatTema = encodeURIComponent(temaAcak);
+        const randomSeed = Math.floor(Math.random() * 10000);
+        
+        // Memanggil AI untuk meng-generate gambar poster sesuai tema
+        const bgUrl = `url('https://image.pollinations.ai/prompt/${formatTema}?width=1920&height=1080&nologo=true&seed=${randomSeed}')`;
+        
+        // Overlay dibuat sangat transparan agar keindahan gambar poster/kartun terlihat jelas
+        document.body.style.backgroundImage = `linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(200, 230, 255, 0.4) 100%), ${bgUrl}`;
     }
+    
     gantiBackground(); // Panggil saat web dibuka
     setInterval(gantiBackground, 60000); // Ganti tiap 60 detik
 
@@ -216,8 +235,8 @@
             if(data.length > 0) {
                 data.forEach((item, index) => {
                     const medali = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '⭐';
-                    lbList.innerHTML += `<div style="padding: 10px 0; border-bottom: 1px dashed #ccc; font-weight: bold;">
-                        ${medali} ${item.nama} - ${item.skor} Poin <span style="font-size:14px; color:#666;">(${item.mata_pelajaran.toUpperCase()})</span>
+                    lbList.innerHTML += `<div style="padding: 12px 0; border-bottom: 2px dotted #4ECDC4; font-weight: bold;">
+                        ${medali} <span style="color:#FF6B6B;">${item.nama}</span> - ${item.skor} Poin <span style="font-size:14px; color:#888;">(${item.mata_pelajaran.toUpperCase()})</span>
                     </div>`;
                 });
                 document.getElementById('leaderboard-area').style.display = 'block';
@@ -228,7 +247,6 @@
     }
 
     async function simpanSkorKeDatabase() {
-        // Popup SweetAlert2 Animasi
         const { value: namaPemain } = await Swal.fire({
             title: '🎉 Luar Biasa!',
             text: `Misi selesai! Kamu mengumpulkan ${score} Bintang. Siapa nama pahlawan kita hari ini?`,
@@ -272,7 +290,7 @@
         }
         currentSubject = subject;
         currentQuestionIndex = 0;
-        score = 0; // Reset skor tiap mulai baru
+        score = 0; 
         scoreEl.innerText = score;
         
         mainMenu.style.display = 'none';
@@ -300,7 +318,7 @@
         Array.from(optionsEl.children).forEach(b => b.style.pointerEvents = 'none');
         
         if (selected === correct) {
-            suaraBenar.play().catch(e => console.log("Audio belum siap")); // Antisipasi error browser policy
+            suaraBenar.play().catch(e => console.log("Audio belum siap")); 
             btn.classList.add('correct-pop');
             
             confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#FF6B6B', '#4ECDC4', '#FFE66D'] });
@@ -340,7 +358,7 @@
     function goHome() {
         quizArea.style.display = 'none';
         mainMenu.style.display = 'flex';
-        muatLeaderboard(); // Update leaderboard saat kembali ke depan
+        muatLeaderboard(); 
     }
 </script>
 </body>
